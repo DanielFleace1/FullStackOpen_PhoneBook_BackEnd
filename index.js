@@ -3,6 +3,8 @@ const app = express()
 const morgan = require('morgan')
 app.use(morgan('tiny'))
 app.use(express.json())
+const cors = require('cors')
+app.use(cors())
 // array of persons data
 let persons = [
     { 
@@ -89,6 +91,7 @@ const generateNewID = ()=>{
 
 app.post('/api/persons',(req,res)=>{
   const body =req.body
+  console.log(req.body)
 
   // Error if name or number is missing from body or if name already exists in phone book
   const found = persons.findIndex(obj => {
