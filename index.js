@@ -119,8 +119,10 @@ app.post('/api/persons',(req,res)=>{
 })
 
 // listening for connections on port 3001. ( in my words will connect if localhost 3001 is accesed and the get request above handle the various /... routes. [so far])
-const PORT = 3001
-app.listen(PORT,() => {
-  console.log(`Server running on ${PORT}`)
-})
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 8000;
+}
+app.listen(port);
+
 
