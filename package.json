@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "buildUI": "rm -rf build && cd ~/fullstackopen_phonebook && npm run build && cp -r build ~/fullstackopen_part3_phonebook_backend_exercise",
+    "deploy": "git push heroku main"
   },
   "author": "",
   "license": "ISC",
