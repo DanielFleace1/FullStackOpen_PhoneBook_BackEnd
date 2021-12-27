@@ -5,6 +5,7 @@ app.use(morgan('tiny'))
 app.use(express.json())
 const cors = require('cors')
 app.use(cors())
+app.use(express.static('build'))
 // array of persons data
 let persons = [
     { 
@@ -121,7 +122,7 @@ app.post('/api/persons',(req,res)=>{
 // listening for connections on port 3001. ( in my words will connect if localhost 3001 is accesed and the get request above handle the various /... routes. [so far])
 let port = process.env.PORT;
 if (port == null || port == "") {
-  port = 8000;
+  port = 3001;
 }
 app.listen(port);
 
