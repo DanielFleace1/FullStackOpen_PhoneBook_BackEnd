@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
@@ -6,6 +7,10 @@ app.use(express.json())
 const cors = require('cors')
 app.use(cors())
 app.use(express.static('build'))
+const Person = require('./models/person')
+const { response } = require('express')
+
+
 // array of persons data
 let persons = [
     { 
@@ -30,6 +35,7 @@ let persons = [
     }
 ]
 
+
 // 3.1 - GET 
 app.get('/',(request,response) => {
     response.send('<h1>Hello phonebook exercise</h1>')
@@ -37,9 +43,13 @@ app.get('/',(request,response) => {
 // Here I am making a HTTP GET request to fetch all the resources in persons. 
 //The response (is sending?) persons in json format 
 app.get('/api/persons',(request,response) => {
-    
-    response.json(persons)
+    // response.json(persons)
+  Person.find({}).then(person=>{
+    //console.log(person);
+    response.json(person)      
+  })
 })
+
 
 // (my words: Helper) function to generate max id of the phone book // apart of 3.2
 const generateMaxId_forInfo = () =>{
@@ -59,14 +69,20 @@ app.get('/info',(req,res) => {
 
 //step 3.3 step 3
 app.get('/api/persons/:id',(req,res) => {
-    const id = Number(req.params.id)
-    const person = persons.find(person => person.id === id)
-    if(person){
-        res.json(person)
-    }
-    else {
-        res.status(404).end()
-    }
+    // old
+    // const id = Number(req.params.id)
+    // const person = persons.find(person => person.id === id)
+    // if(person){
+    //     res.json(person)
+    // }
+    // else {
+    //     res.status(404).end()
+    // }
+    
+    // new
+    Person.findById(req.params.id).then((person) => {
+      res.json(person)
+    })
 })
 
 //3.4 step 4 - delete 
@@ -92,30 +108,40 @@ const generateNewID = ()=>{
 
 app.post('/api/persons',(req,res)=>{
   const body =req.body
-  console.log(req.body)
+ // console.log(req.body)
 
-  // Error if name or number is missing from body or if name already exists in phone book
-  const found = persons.findIndex(obj => {
-    return obj.name === body.name
-  })
-  if(!body.name ){
+
+
+  // // Error if name or number is missing from body or if name already exists in phone book
+  // const found = persons.findIndex(obj => {
+  //   return obj.name === body.name
+  // })
+
+  if(body.name === undefined ){
     return res.status(400).json({error:'name missing'})
   }
-  else if(!body.number){
+
+  else if(body.number === undefined){
     return res.status(400).json({error:'number missing'})
   }
-  else if(found !== -1){
-    return res.status(400).json({error:'Name already exists '})
-  }
+
+
+
+  // else if(found !== -1){
+  //   return res.status(400).json({error:'Name already exists '})
+  // }
    
-  person = {
+  const person = new Person({
     "number": body.number,
     "name":body.name,
-    "id":generateNewID()
-  }
+    //"id":generateNewID()
+  })
 
-  persons = persons.concat(person)
-  res.json(person)
+  person.save().then(savedPerson => {
+    res.json(savedPerson)
+  })
+  // persons = persons.concat(person)
+  // res.json(person)
  
 })
 
