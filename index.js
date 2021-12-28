@@ -6,7 +6,7 @@ const morgan = require('morgan')
 const Person = require('./models/person')
 const { response } = require('express')
 const { db } = require('./models/person')
-//const { response } = require('express')
+const { response } = require('express')
 
 app.use(express.static('build'))
 app.use(cors())
