@@ -1,12 +1,11 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const mongoose = require('mongoose')
 require('dotenv').config()
 const morgan = require('morgan')
 const Person = require('./models/person')
-const { response } = require('express')
-const { db } = require('./models/person')
-const { response } = require('express')
+const { request, response } = require('express')
 
 app.use(express.static('build'))
 app.use(cors())
@@ -26,7 +25,6 @@ const unknownEndpoint = (req,res) => {
   res.status(404).send({ error: 'unknown endpoint' })
 }
 
-
 // GET 
 app.get('/',(request,response) => {
     response.send('<h1>Hello phonebook exercise</h1>')
@@ -34,8 +32,6 @@ app.get('/',(request,response) => {
  
 app.get('/api/persons',(request,response) => {
   
-  let daniel = Person.count()
-  console.log(daniel);
   Person.find({}).then(person=>{
     response.json(person)      
   })
@@ -115,7 +111,6 @@ app.put('/api/persons/:id',(req,res,next)=>{
     .then(updatedPerson =>{
 
       if(updatedPerson){
-        console.log('updatedperson:',updatedPerson);
         res.json(updatedPerson)
       }
         // not sure what is the proper way to handled updated person not found { test by opening two browsers, deleting a data pt , and try to change it in the other.}
