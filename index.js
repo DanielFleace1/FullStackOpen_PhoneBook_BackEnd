@@ -12,6 +12,7 @@ app.use(cors())
 app.use(express.json())
 app.use(morgan('tiny'))
 
+console.log('deploying check');
 
 const errorHandler = (err,req,res,next) => {
   console.log(err.message);
