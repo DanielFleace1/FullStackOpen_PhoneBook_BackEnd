@@ -1,9 +1,10 @@
 const mongoose = require('mongoose')
+var uniqueValidator = require('mongoose-unique-validator');
 require('dotenv').config()
 
 // what is this
-// const url = process.env.MONGODB_URI
-const url = 'mongodb+srv://fsophonebook:dec27daniel@cluster0.f6qq3.mongodb.net/phonebook?retryWrites=true&w=majority'
+const url = process.env.MONGODB_URI
+//const url = 'mongodb+srv://fsophonebook:dec27daniel@cluster0.f6qq3.mongodb.net/phonebook?retryWrites=true&w=majority'
 
 console.log('connecting to', url);
 
@@ -16,9 +17,11 @@ mongoose.connect(url)
     })
 
 const personSchema = new mongoose.Schema({
-  name: String, 
-  number: String
-})
+  name: {type: String, required: true,  unique: true, minlength: 3}, 
+  number: {type: String, required: true, minlength: 3}
+});
+
+personSchema.plugin(uniqueValidator);
 
 personSchema.set('toJSON', {
     transform: (document, returnedObject) => {

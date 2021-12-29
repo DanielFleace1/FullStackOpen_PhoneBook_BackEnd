@@ -15,9 +15,13 @@ app.use(morgan('tiny'))
 console.log('deploying check');
 
 const errorHandler = (err,req,res,next) => {
-  console.log(err.message);
+  //console.log(err.message);
   if(err.name === "CastError"){
     return res.status(400).send({error: "malformatted id"})
+  }
+  else if (err.name === 'ValidationError') {
+    
+    return res.status(400).json({ error: err.message })
   }
   next(err)
 }
@@ -83,7 +87,7 @@ const generateNewID = ()=>{
   const maxID = Math.floor(Math.random() * 1000)
   return maxID
 }
-app.post('/api/persons',(req,res)=>{
+app.post('/api/persons',(req,res,next)=>{
   const body =req.body
   if(body.name === undefined ){
     return res.status(400).json({error:'name missing'})
@@ -95,9 +99,14 @@ app.post('/api/persons',(req,res)=>{
     "number": body.number,
     "name":body.name,
   })
-  person.save().then(savedPerson => {
-    res.json(savedPerson)
-  })
+  person.save()
+    .then(savedPerson => {
+      res.json(savedPerson)
+    })
+    .catch((error) => {
+      //console.log(error);
+      next(error)
+    })
 })
 
 //update 
@@ -115,7 +124,9 @@ app.put('/api/persons/:id',(req,res,next)=>{
         res.json(updatedPerson)
       }
         // not sure what is the proper way to handled updated person not found { test by opening two browsers, deleting a data pt , and try to change it in the other.}
-        next()
+        else{
+          next()
+        }
     })
     .catch(error => next(error))
 })
